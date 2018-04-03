@@ -9,29 +9,25 @@ import math
 from twist_controller import Controller
 
 '''
-You can build this node only after you have built (or partially built) the
-`waypoint_updater` node.
+You can build this node only after you have built (or partially built) the `waypoint_updater` node.
 
-You will subscribe to `/twist_cmd` message which provides the proposed linear
-and angular velocities.
-You can subscribe to any other message that you find important or refer to the
-document for list of messages subscribed to by the reference implementation of
-this node.
+You will subscribe to `/twist_cmd` message which provides the proposed linear and angular velocities.
+You can subscribe to any other message that you find important or refer to the document for list
+of messages subscribed to by the reference implementation of this node.
 
-One thing to keep in mind while building this node and the `twist_controller`
-class is the status of `dbw_enabled`. While in the simulator, its enabled all
-the time, in the real car, that will not be the case. This may cause your PID
-controller to accumulate error because the car could temporarily be driven by
-a human instead of your controller.
+One thing to keep in mind while building this node and the `twist_controller` class is the status
+of `dbw_enabled`. While in the simulator, its enabled all the time, in the real car, that will
+not be the case. This may cause your PID controller to accumulate error because the car could
+temporarily be driven by a human instead of your controller.
 
-We have provided two launch files with this node. Vehicle specific values
-(like vehicle_mass, wheel_base) etc should not be altered in these files.
+We have provided two launch files with this node. Vehicle specific values (like vehicle_mass,
+wheel_base) etc should not be altered in these files.
 
-We have also provided some reference implementations for PID controller and
-other utility classes. You are free to use them or build your own.
+We have also provided some reference implementations for PID controller and other utility classes.
+You are free to use them or build your own.
 
-Once you have the proposed throttle, brake, and steer values, publish it on
-the various publishers that we have created in the `__init__` function.
+Once you have the proposed throttle, brake, and steer values, publish it on the various publishers
+that we have created in the `__init__` function.
 
 '''
 
@@ -64,14 +60,21 @@ class DBWNode(object):
         self.target_angular_veloctiy = 0
 
         self.controller = Controller(
+            vehicle_mass,
+            fuel_capacity,
+            brake_deadband,
+            decel_limit,
+            accel_limit,
+            wheel_radius,
             wheel_base,
-            steer_ratio * 5,
-            50,
+            steer_ratio,
             max_lat_accel,
             max_steer_angle
         )
+        self.throttle = self.brake = self.steering =0
+
         rospy.Subscriber(
-            '/current_velocity', TwistStamped,
+            '/current_velocity', TwistStamped, 
             self.current_velocity_cb, queue_size=1)
         rospy.Subscriber(
             '/twist_cmd', TwistStamped, self.twist_cmd_cb, queue_size=1)
@@ -83,14 +86,13 @@ class DBWNode(object):
     def loop(self):
         rate = rospy.Rate(50)  # 50Hz
         while not rospy.is_shutdown():
-            throttle, brake, steering = self.controller.control(
+            if not None in (self.target_linear_velocity,self.target_angular_veloctiy,self.current_linear_velocity):
+                self.throttle, self.brake, self.steering = self.controller.control(self.dbw_enabled,
                 self.target_linear_velocity,
                 self.target_angular_veloctiy,
-                self.current_linear_velocity
-            )
+                self.current_linear_velocity)
 
-            if self.dbw_enabled:
-                self.publish(throttle, brake, steering)
+                self.publish(self.throttle, self.brake, self.steering)
             rate.sleep()
 
     def current_velocity_cb(self, curr_velocity):
