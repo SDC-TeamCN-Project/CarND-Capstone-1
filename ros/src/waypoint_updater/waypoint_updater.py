@@ -88,6 +88,7 @@ class WaypointUpdater(object):
 
         waypoints = self.base_waypoints[
             self.next_wp_idx:self.next_wp_idx+LOOKAHEAD_WPS
+
         ]
         if self.next_stop_line_idx != -1:
             waypoints = self.slowdown_to_stop(waypoints)
