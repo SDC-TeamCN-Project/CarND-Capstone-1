@@ -99,7 +99,7 @@ class WaypointUpdater(object):
         self.final_waypoints_pub.publish(final_waypoints_msg)
 
     def slowdown_to_stop(self, waypoints):
-        last_idx = self.next_stop_line_idx - self.next_wp_idx
+        last_idx = self.next_stop_line_idx - self.next_wp_idx - 2
         last = waypoints[last_idx]
         last.twist.twist.linear.x = 0.
         for wp in waypoints[:last_idx][::-1]:
