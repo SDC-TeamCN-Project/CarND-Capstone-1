@@ -15,7 +15,7 @@ import os
 import time
 
 STATE_COUNT_THRESHOLD = 3
-DETECTION_DISTANCE = 300
+DETECTION_DISTANCE = 200
 
 
 class TLDetector(object):
