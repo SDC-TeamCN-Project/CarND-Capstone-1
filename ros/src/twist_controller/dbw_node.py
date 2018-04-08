@@ -2,12 +2,11 @@
 
 import rospy
 from std_msgs.msg import Bool
-from dbw_mkz_msgs.msg import ThrottleCmd, SteeringCmd, BrakeCmd  # , SteeringReport
+from dbw_mkz_msgs.msg import ThrottleCmd, SteeringCmd, BrakeCmd
 from geometry_msgs.msg import TwistStamped
-import math
-
 from twist_controller import Controller
 
+<<<<<<< HEAD
 '''
 You can build this node only after you have built (or partially built) the `waypoint_updater` node.
 
@@ -31,13 +30,18 @@ that we have created in the `__init__` function.
 
 '''
 
+=======
+>>>>>>> upstream/master
 
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')
         vehicle_mass = rospy.get_param('~vehicle_mass', 1736.35)
+<<<<<<< HEAD
         fuel_capacity = rospy.get_param('~fuel_capacity', 13.5)
         brake_deadband = rospy.get_param('~brake_deadband', .1)
+=======
+>>>>>>> upstream/master
         decel_limit = rospy.get_param('~decel_limit', -5)
         accel_limit = rospy.get_param('~accel_limit', 1.)
         wheel_radius = rospy.get_param('~wheel_radius', 0.2413)
@@ -60,8 +64,11 @@ class DBWNode(object):
 
         self.controller = Controller(
             vehicle_mass,
+<<<<<<< HEAD
             fuel_capacity,
             brake_deadband,
+=======
+>>>>>>> upstream/master
             decel_limit,
             accel_limit,
             wheel_radius,
@@ -70,7 +77,10 @@ class DBWNode(object):
             max_lat_accel,
             max_steer_angle
         )
+<<<<<<< HEAD
         self.throttle = self.brake = self.steering =0
+=======
+>>>>>>> upstream/master
 
         rospy.Subscriber(
             '/current_velocity', TwistStamped, 
@@ -85,13 +95,22 @@ class DBWNode(object):
     def loop(self):
         rate = rospy.Rate(50)  # 50Hz
         while not rospy.is_shutdown():
+<<<<<<< HEAD
             if not None in (self.target_linear_velocity,self.target_angular_veloctiy,self.current_linear_velocity):
                 self.throttle, self.brake, self.steering = self.controller.control(self.dbw_enabled,
+=======
+            throttle, brake, steering = self.controller.control(
+                self.dbw_enabled,
+>>>>>>> upstream/master
                 self.target_linear_velocity,
                 self.target_angular_veloctiy,
                 self.current_linear_velocity)
 
+<<<<<<< HEAD
                 self.publish(self.throttle, self.brake, self.steering)
+=======
+            self.publish(throttle, brake, steering)
+>>>>>>> upstream/master
             rate.sleep()
 
     def current_velocity_cb(self, curr_velocity):
